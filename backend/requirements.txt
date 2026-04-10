@@ -1,5 +1,5 @@
 fastapi
-uvicorn[standard]
+uvicorn
 sqlalchemy
 psycopg2-binary
 pydantic
@@ -8,14 +8,5 @@ python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
 python-dotenv
-alembic
 requests
-tensorflow-cpu==2.15.0
-keras==2.15.0
-h5py
-pillow
-pyyaml
-numpy
-opencv-python-headless
-gunicorn
 email-validator
