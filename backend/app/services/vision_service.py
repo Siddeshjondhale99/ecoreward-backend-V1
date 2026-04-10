@@ -11,8 +11,15 @@ from typing import Dict
 _model = None
 _class_names = ["Dry", "Wet", "Recyclable", "Hazardous"]
 _image_size = 224
+
+# NOTE: 
+# If using .keras model, convert it locally using:
+# from tensorflow.keras.models import load_model
+# model = load_model("model.keras", compile=False)
+# model.save("model.h5")
+
 _model_path = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), "..", "ml_models", "best_model.h5"
+    os.path.dirname(__file__), "..", "models", "model.h5"
 ))
 
 def _load_model():
@@ -22,12 +29,14 @@ def _load_model():
         if not os.path.exists(_model_path):
             print(f"WARNING: Model not found at {_model_path}")
             return
+        
+        from tensorflow.keras.models import load_model
         try:
-            # Use compile=False to bypass version mismatches in custom layers
             _model = load_model(_model_path, compile=False)
-            print(f"AI Model loaded successfully from {_model_path}")
+            print("Model loaded successfully")
         except Exception as e:
-            print(f"ERROR: Failed to load model: {e}")
+            print("Model loading failed:", e)
+            print("Application is starting without active AI model...")
 
 def classify_waste(image_bytes: bytes) -> Dict[str, any]:
     """Classifies waste image using the pre-trained EfficientNetB0 model."""
