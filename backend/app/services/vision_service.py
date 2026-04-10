@@ -3,6 +3,7 @@ import os
 import numpy as np
 import tensorflow as tf
 from PIL import Image
+from tensorflow.keras.models import load_model
 from tensorflow.keras.applications import efficientnet
 from typing import Dict
 
@@ -22,7 +23,8 @@ def _load_model():
             print(f"WARNING: Model not found at {_model_path}")
             return
         try:
-            _model = tf.keras.models.load_model(_model_path)
+            # Use compile=False to bypass version mismatches in custom layers
+            _model = load_model(_model_path, compile=False)
             print(f"AI Model loaded successfully from {_model_path}")
         except Exception as e:
             print(f"ERROR: Failed to load model: {e}")

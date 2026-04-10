@@ -11,6 +11,8 @@ python-dotenv
 alembic
 requests
 tensorflow-cpu==2.15.0
+keras==2.15.0
+h5py
 pillow
 pyyaml
 numpy
