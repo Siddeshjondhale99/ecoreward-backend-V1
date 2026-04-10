@@ -5,7 +5,12 @@ from .routes import auth, user, reward
 from .config import settings
 
 # Create database tables
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+    print("Database connected and tables created successfully")
+except Exception as e:
+    print(f"Database connection failed: {e}")
+    print("Application is starting without active DB connection...")
 
 app = FastAPI(
     title=settings.APP_NAME,
