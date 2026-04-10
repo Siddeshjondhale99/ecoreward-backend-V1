@@ -2,10 +2,11 @@ import os
 import sys
 
 # Add the backend folder to the search path
-sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
+backend_path = os.path.join(os.path.dirname(__file__), "backend")
+sys.path.append(backend_path)
 
-# Import the app from the backend folder
-from backend.app.main import app
+# Now we can import 'app' directly as it is now in the search path
+from app.main import app
 
 if __name__ == "__main__":
     import uvicorn
