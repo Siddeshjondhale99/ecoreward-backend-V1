@@ -12,7 +12,7 @@ _model = None
 _class_names = ["Dry", "Wet", "Recyclable", "Hazardous"]
 _image_size = 224
 _model_path = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), "..", "ml_models", "best_model.keras"
+    os.path.dirname(__file__), "..", "ml_models", "best_model.h5"
 ))
 
 def _load_model():
