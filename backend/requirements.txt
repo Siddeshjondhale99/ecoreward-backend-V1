@@ -16,3 +16,4 @@ pyyaml
 numpy
 opencv-python-headless
 gunicorn
+email-validator
