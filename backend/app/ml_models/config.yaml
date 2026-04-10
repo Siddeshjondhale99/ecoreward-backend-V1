@@ -1,0 +1,49 @@
+project:
+  name: waste-classification
+  seed: 42
+paths:
+  dataset_root: C:/Users/heman/Downloads/archive/garbage_classification
+  outputs_dir: outputs
+  models_dir: models
+  artifacts_dir: outputs/artifacts
+  splits_dir: outputs/splits
+  logs_dir: outputs/logs
+  reports_dir: outputs/reports
+training:
+  image_size: 224
+  batch_size: 32
+  epochs_frozen: 10
+  epochs_finetune: 20
+  base_lr: 0.001
+  finetune_lr: 0.0001
+  confidence_threshold: 0.6
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+  class_balance: true
+  freeze_until_layer: -20
+  cache_dataset: false
+  use_mixed_precision: false
+augmentation:
+  random_flip: true
+  random_rotation: 0.15
+  random_zoom: 0.1
+  random_contrast: 0.1
+  random_brightness: 0.1
+labels:
+  final_classes: [Dry, Wet, Recyclable, Hazardous]
+  mapping:
+    paper: Recyclable
+    cardboard: Recyclable
+    plastic: Recyclable
+    metal: Recyclable
+    brown-glass: Recyclable
+    green-glass: Recyclable
+    white-glass: Recyclable
+    biological: Wet
+    battery: Hazardous
+    trash: Dry
+    clothes: Dry
+    shoes: Dry
+runtime:
+  num_workers: 4

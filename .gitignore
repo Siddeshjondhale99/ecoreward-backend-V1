@@ -1,0 +1,29 @@
+# Backend
+backend/.env
+backend/__pycache__/
+backend/*.py[cod]
+backend/$py.class
+backend/.venv/
+backend/venv/
+
+# Flutter/Mobile
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+ios/
+android/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDEs
+.idea/
+.vscode/
+.history/
+
+# OS
+.DS_Store
+Thumbs.db
