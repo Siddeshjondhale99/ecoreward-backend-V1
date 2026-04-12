@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     POINTS_DRY: int = 10
     POINTS_WET: int = 5
     POINTS_HAZARDOUS: int = 2
+    
+    AI_SERVICE_URL: str = "https://web-production-4df6e.up.railway.app"
 
     class Config:
         env_file = ".env"
