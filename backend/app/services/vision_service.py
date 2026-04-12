@@ -35,11 +35,28 @@ def classify_waste(file_contents: bytes, max_retries: int = 3) -> Dict[str, any]
             # 1. Success
             if response.status_code == 200:
                 result = response.json()
-                # Expected keys: predicted_index, predicted_label, confidence, prediction
+                
+                # OPTION A: Robust Parsing
+                # Try to get new keys first
+                label = result.get("predicted_label")
+                confidence = result.get("confidence")
+                index = result.get("predicted_index")
+                
+                # Fallback: Parse from raw prediction array [[p1, p2, p3, p4]]
+                if label is None and "prediction" in result:
+                    try:
+                        probs = result["prediction"][0] # Get first batch
+                        confidence = max(probs)
+                        index = probs.index(confidence)
+                        class_names = ["dry", "wet", "recyclable", "hazardous"]
+                        label = class_names[index]
+                    except (IndexError, ValueError) as e:
+                        print(f"Failed to parse raw prediction: {e}")
+                
                 return {
-                    "label": result.get("predicted_label", "unknown"),
-                    "confidence": result.get("confidence", 0.0),
-                    "index": result.get("predicted_index", -1),
+                    "label": label or "unknown",
+                    "confidence": confidence or 0.0,
+                    "index": index if index is not None else -1,
                     "raw": result
                 }
             
