@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models.iot import BinState
 from ..models.user import User
-from ..schemas.iot import QRVerification, DeviceStatus, VerificationResponse
+from ..schemas.iot import QRVerification, DeviceStatus, VerificationResponse, WasteMeasurement
 from datetime import datetime
 
 router = APIRouter(prefix="/iot", tags=["IoT & Hardware"])
