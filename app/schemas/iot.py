@@ -12,3 +12,9 @@ class DeviceStatus(BaseModel):
 class VerificationResponse(BaseModel):
     status: str
     message: Optional[str] = None
+
+class WasteMeasurement(BaseModel):
+    device_id: str = "BIN_001"
+    weight: float
+    moisture: float
+    waste_type: Optional[str] = "unknown" # AI might have already set this

@@ -66,6 +66,45 @@ def get_device_status(device_id: str = "BIN_001", db: Session = Depends(get_db))
     
     return {"status": current_status, "device_id": device_id}
 
+@router.post("/report-measurements")
+def report_measurements(data: WasteMeasurement, db: Session = Depends(get_db)):
+    """
+    Called by ESP32 after the waste has been dropped and measured.
+    Links the weight/moisture to the last user who scanned the bin.
+    """
+    bin_state = db.query(BinState).filter(BinState.device_id == data.device_id).first()
+    
+    if not bin_state or not bin_state.last_user_id:
+        raise HTTPException(status_code=400, detail="No active user session for this device")
+
+    user = db.query(User).filter(User.id == bin_state.last_user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Create the waste record and award points
+    # We use the waste_type from the AI prediction if available, otherwise unknown
+    # Note: In a full flow, the App might have already set the 'last_waste_type' in BinState
+    from ..services import waste_service
+    
+    record = waste_service.create_waste_submission(
+        db=db,
+        user=user,
+        weight=data.weight,
+        waste_type=data.waste_type,
+        moisture=data.moisture,
+        confidence=0.9 # Typical confidence for a valid drop
+    )
+
+    # Reset session
+    bin_state.last_user_id = None
+    db.commit()
+
+    return {
+        "status": "success",
+        "points_earned": record.points_earned,
+        "new_total": user.points
+    }
+
 @router.post("/reset-device")
 def reset_device(device_id: str = "BIN_001", db: Session = Depends(get_db)):
     """

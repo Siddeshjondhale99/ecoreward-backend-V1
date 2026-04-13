@@ -11,3 +11,6 @@ app/models/*.h5
 .idea/
 .vscode/
 .DS_Store
+
+EcoReward-Mobile/
+
