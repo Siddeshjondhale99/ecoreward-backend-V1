@@ -1,28 +1,35 @@
 # Backend
-backend/.env
-backend/__pycache__/
-backend/*.py[cod]
-backend/$py.class
-backend/.venv/
-backend/venv/
+Backend/.env
+Backend/__pycache__/
+Backend/*.py[cod]
+Backend/$py.class
+Backend/.venv/
+Backend/venv/
+Backend/app/ml_models/*.h5
+Backend/app/models/*.h5
 
 # Flutter/Mobile
-.dart_tool/
-.packages
-.pub-cache/
-.pub/
-build/
-ios/
-android/
+Frontend/.dart_tool/
+Frontend/.packages
+Frontend/.pub-cache/
+Frontend/.pub/
+Frontend/build/
+Frontend/ios/
+Frontend/android/
+Frontend/jdk17/
+Frontend/jdk17.zip
 *.exe
 *.dll
 *.so
 *.dylib
+*.zip
 
 # IDEs
 .idea/
 .vscode/
 .history/
+Frontend/.idea/
+Frontend/.vscode/
 
 # OS
 .DS_Store

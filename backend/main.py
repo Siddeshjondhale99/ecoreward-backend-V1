@@ -1,11 +1,11 @@
 import os
 import sys
 
-# Add the backend folder to the search path
-backend_path = os.path.join(os.path.dirname(__file__), "backend")
-sys.path.append(backend_path)
+# Ensure the current directory is in the path so 'import app' works
+current_dir = os.path.dirname(__file__)
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
 
-# Now we can import 'app' directly as it is now in the search path
 from app.main import app
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .routes import auth, user, reward
+from .routes import auth, user, reward, iot
+from .models import iot as iot_model # Ensure model is loaded for metadata
 from .config import settings
 
 # Create database tables
@@ -33,6 +34,7 @@ app.include_router(user.router)
 app.include_router(user.waste_router)
 app.include_router(reward.router)
 app.include_router(reward.admin_router)
+app.include_router(iot.router)
 
 @app.get("/")
 def root():
