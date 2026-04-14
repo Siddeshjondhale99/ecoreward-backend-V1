@@ -22,7 +22,7 @@ def calculate_points(weight: float, waste_type: str, moisture: float = 0.0, conf
     if weight == 0 or moisture == 0:
         return int(confidence * 50)
     
-    points = int(weight * base_multiplier)
+    points = int(weight * (base_multiplier or 5))
     
     # Bonuses
     # 1. Moisture Bonus
