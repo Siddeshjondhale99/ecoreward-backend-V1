@@ -19,6 +19,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Maintenance Route: Hard reset for schema mismatches
+from sqlalchemy import text
+@app.post("/debug/hard-reset-database")
+def hard_reset_database(db: SessionLocal = Depends(get_db)):
+    try:
+        # Drop all tables except users to preserve accounts
+        db.execute(text("DROP TABLE IF EXISTS waste_records, redeemed_vouchers, rewards, bin_states CASCADE;"))
+        db.commit()
+        # Recreate everything
+        Base.metadata.create_all(bind=engine)
+        return {"message": "All related tables recreated successfully. History cleared, Schema fixed."}
+    except Exception as e:
+        return {"error": str(e)}
+
 # CORS Middleware for Flutter app integration
 app.add_middleware(
     CORSMiddleware,
