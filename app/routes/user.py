@@ -42,9 +42,18 @@ def get_user_history(current_user: User = Depends(get_current_user), db: Session
     return db.query(WasteRecord).filter(WasteRecord.user_id == current_user.id).all()
 
 @router.post("/classify-waste")
-async def classify_waste(file: UploadFile = File(...)):
+async def classify_waste(file: UploadFile = File(...), device_id: Optional[str] = None, db: Session = Depends(get_db)):
     contents = await file.read()
     result = vision_service.classify_waste(contents)
+    
+    if device_id:
+        from ..models.iot import BinState
+        bin_state = db.query(BinState).filter(BinState.device_id == device_id).first()
+        if bin_state:
+            bin_state.last_waste_type = result.get("label")
+            bin_state.last_ai_confidence = result.get("confidence")
+            db.commit()
+            
     return result
 
 # Waste Routes

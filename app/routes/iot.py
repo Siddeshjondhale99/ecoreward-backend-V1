@@ -20,9 +20,11 @@ def verify_user(data: QRVerification, db: Session = Depends(get_db)):
     ).first()
 
     if not user:
-        # For prototype purposes, we could also allow custom mock IDs
+        # For prototype purposes, we allow a special mock ID
         if data.qr_data == "USER_123":
-            pass # Special mock case allowed
+            user = db.query(User).first()
+            if not user:
+                raise HTTPException(status_code=404, detail="No users exist in DB to assign session")
         else:
             # Set bin to denied
             bin_state = db.query(BinState).filter(BinState.device_id == "BIN_001").first()
@@ -86,17 +88,23 @@ def report_measurements(data: WasteMeasurement, db: Session = Depends(get_db)):
     # Note: In a full flow, the App might have already set the 'last_waste_type' in BinState
     from ..services import waste_service
     
+    # Use the persisted AI results if available from the app scan
+    final_waste_type = bin_state.last_waste_type or data.waste_type or "unknown"
+    final_confidence = bin_state.last_ai_confidence or 0.9
+
     record = waste_service.create_waste_submission(
         db=db,
         user=user,
         weight=data.weight,
-        waste_type=data.waste_type,
+        waste_type=final_waste_type,
         moisture=data.moisture,
-        confidence=0.9 # Typical confidence for a valid drop
+        confidence=final_confidence
     )
 
-    # Reset session
+    # Reset session and clear AI history for next user
     bin_state.last_user_id = None
+    bin_state.last_waste_type = None
+    bin_state.last_ai_confidence = None
     db.commit()
 
     return {

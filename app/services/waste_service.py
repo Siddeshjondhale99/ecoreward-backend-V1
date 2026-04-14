@@ -18,6 +18,10 @@ def calculate_points(weight: float, waste_type: str, moisture: float = 0.0, conf
     elif waste_type == "hazardous":
         base_multiplier = settings.POINTS_HAZARDOUS
     
+    # AI-Based Reward Logic: If weight or moisture is zero, use confidence-based points
+    if weight == 0 or moisture == 0:
+        return int(confidence * 50)
+    
     points = int(weight * base_multiplier)
     
     # Bonuses
@@ -84,6 +88,30 @@ def redeem_reward(db: Session, user: User, reward_id: int):
     db_voucher = RedeemedVoucher(
         user_id=user.id,
         reward_id=reward.id,
+        voucher_code=voucher_code
+    )
+    db.add(db_voucher)
+    db.commit()
+    db.refresh(db_voucher)
+    return db_voucher, None
+
+def redeem_custom_points(db: Session, user: User, points: int):
+    if points < 100:
+        return None, "Minimum 100 points required to generate a voucher"
+    
+    if user.points < points:
+        return None, "Insufficient points"
+        
+    # Deduct points
+    user.points -= points
+    db.add(user)
+    
+    # Generate voucher
+    voucher_code = generate_voucher_code()
+    # For custom redemptions, we don't link to a specific reward ID (or use a placeholder)
+    db_voucher = RedeemedVoucher(
+        user_id=user.id,
+        reward_id=None, # Indicates custom voucher
         voucher_code=voucher_code
     )
     db.add(db_voucher)

@@ -21,6 +21,13 @@ def redeem_reward(reward_id: int, current_user: User = Depends(get_current_user)
         raise HTTPException(status_code=400, detail=error)
     return voucher
 
+@router.post("/redeem-custom", response_model=VoucherSchema)
+def redeem_custom(points: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    voucher, error = waste_service.redeem_custom_points(db, current_user, points)
+    if error:
+        raise HTTPException(status_code=400, detail=error)
+    return voucher
+
 # Admin Routes
 admin_router = APIRouter(tags=["Admin Control"])
 

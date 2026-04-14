@@ -10,3 +10,5 @@ class BinState(Base):
     status = Column(String, default="idle") # "idle", "allowed", "denied"
     last_updated = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_user_id = Column(Integer, nullable=True)
+    last_waste_type = Column(String, nullable=True)
+    last_ai_confidence = Column(Float, nullable=True)
