@@ -44,3 +44,8 @@ class RedeemedVoucher(BaseModel):
 
     class Config:
         from_attributes = True
+class CustomRedeemRequest(BaseModel):
+    points: int
+
+    class Config:
+        from_attributes = True

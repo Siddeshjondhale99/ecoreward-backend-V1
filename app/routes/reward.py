@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..schemas.waste import Reward as RewardSchema, RedeemedVoucher as VoucherSchema
+from ..schemas.waste import Reward as RewardSchema, RedeemedVoucher as VoucherSchema, CustomRedeemRequest
 from ..models.user import User
 from ..models.waste import WasteRecord, Reward, RedeemedVoucher
 from ..services import waste_service
@@ -22,8 +22,8 @@ def redeem_reward(reward_id: int, current_user: User = Depends(get_current_user)
     return voucher
 
 @router.post("/redeem-custom", response_model=VoucherSchema)
-def redeem_custom(points: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    voucher, error = waste_service.redeem_custom_points(db, current_user, points)
+def redeem_custom(request: CustomRedeemRequest, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    voucher, error = waste_service.redeem_custom_points(db, current_user, request.points)
     if error:
         raise HTTPException(status_code=400, detail=error)
     return voucher
