@@ -1,6 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from .database import engine, Base
+from .database import engine, Base, SessionLocal, get_db
 from .routes import auth, user, reward, iot
 from .models import iot as iot_model # Ensure model is loaded for metadata
 from .config import settings
