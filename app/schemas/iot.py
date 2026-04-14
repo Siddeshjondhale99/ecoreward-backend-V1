@@ -4,6 +4,7 @@ from datetime import datetime
 
 class QRVerification(BaseModel):
     qr_data: str # Can be email or user ID
+    user_email: Optional[str] = None # Added to link session to correct user account
 
 class DeviceStatus(BaseModel):
     status: str

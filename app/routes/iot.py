@@ -14,14 +14,22 @@ def verify_user(data: QRVerification, db: Session = Depends(get_db)):
     Called by the Mobile App when a QR code is scanned.
     qr_data can be user email or a specific user ID.
     """
-    # Check if user exists (by email or rfid_id)
-    user = db.query(User).filter(
-        (User.email == data.qr_data) | (User.rfid_id == data.qr_data)
-    ).first()
+    # Priority 1: Link to the specific user email provided by the app
+    user = None
+    if data.user_email:
+        from ..services import auth_service
+        user = auth_service.get_user_by_email(db, email=data.user_email)
 
     if not user:
-        # For prototype purposes, we allow a special mock ID
+        # Priority 2: Check if QR data itself matches an email or rfid_id
+        user = db.query(User).filter(
+            (User.email == data.qr_data) | (User.rfid_id == data.qr_data)
+        ).first()
+
+    if not user:
+        # Fallback for prototype testing: use ANY existing user only if the QR data is 'USER_123'
         if data.qr_data == "USER_123":
+            # But ONLY if we don't already have one from the app's logged-in status
             user = db.query(User).first()
             if not user:
                 raise HTTPException(status_code=404, detail="No users exist in DB to assign session")
