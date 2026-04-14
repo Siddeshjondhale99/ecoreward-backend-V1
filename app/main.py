@@ -19,18 +19,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Maintenance Route: Drops and recreates the bin_states table to fix schema mismatches
-from sqlalchemy import text
-@app.post("/debug/reset-iot-table")
-def reset_iot_table(db: SessionLocal = Depends(get_db)):
-    try:
-        db.execute(text("DROP TABLE IF EXISTS bin_states CASCADE;"))
-        db.commit()
-        Base.metadata.create_all(bind=engine)
-        return {"message": "bin_states table recreated successfully with latest schema"}
-    except Exception as e:
-        return {"error": str(e)}
-
 # CORS Middleware for Flutter app integration
 app.add_middleware(
     CORSMiddleware,
