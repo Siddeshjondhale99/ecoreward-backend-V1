@@ -19,21 +19,17 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Debug Middleware: Capture and return full traceback for 500 errors
-from fastapi import Request
-from fastapi.responses import JSONResponse
-import traceback
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    return JSONResponse(
-        status_code=500,
-        content={
-            "error": "Internal Server Error",
-            "detail": str(exc),
-            "traceback": traceback.format_exc()
-        }
-    )
+# Maintenance Route: Drops and recreates the bin_states table to fix schema mismatches
+from sqlalchemy import text
+@app.post("/debug/reset-iot-table")
+def reset_iot_table(db: SessionLocal = Depends(get_db)):
+    try:
+        db.execute(text("DROP TABLE IF EXISTS bin_states CASCADE;"))
+        db.commit()
+        Base.metadata.create_all(bind=engine)
+        return {"message": "bin_states table recreated successfully with latest schema"}
+    except Exception as e:
+        return {"error": str(e)}
 
 # CORS Middleware for Flutter app integration
 app.add_middleware(
