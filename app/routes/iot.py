@@ -53,7 +53,13 @@ def get_device_status(device_id: str = "BIN_001", db: Session = Depends(get_db))
     Called by ESP32 poller every 2-3 seconds.
     Resets status to 'idle' after successful read.
     """
-    bin_state = db.query(BinState).filter(BinState.device_id == device_id).first()
+    try:
+        bin_state = db.query(BinState).filter(BinState.device_id == device_id).first()
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Database Query Failed: {str(e)}. This often means the DB schema is out of sync. Try dropping the 'bin_states' table in Supabase."
+        )
     
     if not bin_state:
         # Default if not initialized

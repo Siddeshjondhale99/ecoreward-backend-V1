@@ -19,6 +19,22 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Debug Middleware: Capture and return full traceback for 500 errors
+from fastapi import Request
+from fastapi.responses import JSONResponse
+import traceback
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "detail": str(exc),
+            "traceback": traceback.format_exc()
+        }
+    )
+
 # CORS Middleware for Flutter app integration
 app.add_middleware(
     CORSMiddleware,
