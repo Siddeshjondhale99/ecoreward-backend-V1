@@ -1,9 +1,9 @@
 import requests
 import time
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 from ..config import settings
 
-def check_health() -> Dict[str, any]:
+def check_health() -> Dict[str, Any]:
     """
     Checks the health of the AI model service.
     Recommended by the technical spec to be called before serving traffic.
@@ -17,7 +17,7 @@ def check_health() -> Dict[str, any]:
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-def classify_waste(file_contents: bytes, max_retries: int = 3) -> Dict[str, any]:
+def classify_waste(file_contents: bytes, max_retries: int = 3) -> Dict[str, Any]:
     """
     Classifies waste image by calling the Railway AI microservice.
     Handles multipart/form-data upload, error codes, and transient retries.
