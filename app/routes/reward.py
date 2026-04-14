@@ -28,6 +28,10 @@ def redeem_custom(request: CustomRedeemRequest, current_user: User = Depends(get
         raise HTTPException(status_code=400, detail=error)
     return voucher
 
+@router.get("/user/vouchers", response_model=list[VoucherSchema])
+def get_user_vouchers(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return db.query(RedeemedVoucher).filter(RedeemedVoucher.user_id == current_user.id).all()
+
 # Admin Routes
 admin_router = APIRouter(tags=["Admin Control"])
 
