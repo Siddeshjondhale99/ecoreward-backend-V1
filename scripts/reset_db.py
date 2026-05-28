@@ -69,10 +69,12 @@ def reset_and_seed():
 
         # Create default rewards
         rewards = [
-            Reward(name="Amazon Voucher - Rs. 100", points_required=200),
-            Reward(name="Starbucks Beverage", points_required=400),
-            Reward(name="Eco Bottle", points_required=300),
-            Reward(name="Metro Smart Card Recharge - Rs. 50", points_required=100),
+            Reward(name="Property Tax Rebate Voucher - Rs. 100", points_required=1000),
+            Reward(name="Property Tax Rebate Voucher - Rs. 500", points_required=5000),
+            Reward(name="Electricity Bill Discount - Rs. 50", points_required=500),
+            Reward(name="Electricity Bill Discount - Rs. 200", points_required=2000),
+            Reward(name="Water Tax/Bill Discount - Rs. 50", points_required=500),
+            Reward(name="Water Tax/Bill Discount - Rs. 150", points_required=1500),
         ]
         for r in rewards:
             db.add(r)

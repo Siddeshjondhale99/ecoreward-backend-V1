@@ -26,6 +26,10 @@ class RedeemedVoucher(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    reward_id = Column(Integer, ForeignKey("rewards.id"))
+    reward_id = Column(Integer, ForeignKey("rewards.id"), nullable=True)
     voucher_code = Column(String, nullable=False, unique=True)
+    bill_type = Column(String, nullable=True) # property_tax, electricity_bill, water_bill
+    consumer_number = Column(String, nullable=True)
+    provider_name = Column(String, nullable=True)
+    amount_paid = Column(Float, nullable=True)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())

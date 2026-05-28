@@ -38,14 +38,22 @@ class Reward(RewardBase):
 class RedeemedVoucher(BaseModel):
     id: int
     user_id: int
-    reward_id: int
+    reward_id: Optional[int] = None
     voucher_code: str
+    bill_type: Optional[str] = None
+    consumer_number: Optional[str] = None
+    provider_name: Optional[str] = None
+    amount_paid: Optional[float] = None
     timestamp: datetime
 
     class Config:
         from_attributes = True
+
 class CustomRedeemRequest(BaseModel):
     points: int
+    bill_type: Optional[str] = None
+    consumer_number: Optional[str] = None
+    provider_name: Optional[str] = None
 
     class Config:
         from_attributes = True

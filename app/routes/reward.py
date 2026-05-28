@@ -23,7 +23,14 @@ def redeem_reward(reward_id: int, current_user: User = Depends(get_current_user)
 
 @router.post("/redeem-custom", response_model=VoucherSchema)
 def redeem_custom(request: CustomRedeemRequest, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    voucher, error = waste_service.redeem_custom_points(db, current_user, request.points)
+    voucher, error = waste_service.redeem_custom_points(
+        db, 
+        current_user, 
+        request.points,
+        request.bill_type,
+        request.consumer_number,
+        request.provider_name
+    )
     if error:
         raise HTTPException(status_code=400, detail=error)
     return voucher

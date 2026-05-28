@@ -95,7 +95,14 @@ def redeem_reward(db: Session, user: User, reward_id: int):
     db.refresh(db_voucher)
     return db_voucher, None
 
-def redeem_custom_points(db: Session, user: User, points: int):
+def redeem_custom_points(
+    db: Session, 
+    user: User, 
+    points: int, 
+    bill_type: str = None, 
+    consumer_number: str = None, 
+    provider_name: str = None
+):
     if points < 100:
         return None, "Minimum 100 points required to generate a voucher"
     
@@ -108,11 +115,19 @@ def redeem_custom_points(db: Session, user: User, points: int):
     
     # Generate voucher
     voucher_code = generate_voucher_code()
+    
+    # Calculate amount paid (10 points = 1.0 currency unit)
+    amount_paid = points / 10.0
+    
     # For custom redemptions, we don't link to a specific reward ID (or use a placeholder)
     db_voucher = RedeemedVoucher(
         user_id=user.id,
         reward_id=None, # Indicates custom voucher
-        voucher_code=voucher_code
+        voucher_code=voucher_code,
+        bill_type=bill_type,
+        consumer_number=consumer_number,
+        provider_name=provider_name,
+        amount_paid=amount_paid
     )
     db.add(db_voucher)
     db.commit()
