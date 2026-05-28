@@ -61,6 +61,10 @@ def update_user_profile(
         current_user.house_no = profile_data.house_no
     if profile_data.profile_photo is not None:
         current_user.profile_photo = profile_data.profile_photo
+    if profile_data.city is not None:
+        current_user.city = profile_data.city
+    if profile_data.pincode is not None:
+        current_user.pincode = profile_data.pincode
         
     db.commit()
     db.refresh(current_user)

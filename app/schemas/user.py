@@ -9,6 +9,8 @@ class UserBase(BaseModel):
     ward_no: Optional[str] = None
     house_no: Optional[str] = None
     profile_photo: Optional[str] = None
+    city: Optional[str] = None
+    pincode: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
@@ -30,3 +32,5 @@ class UserUpdate(BaseModel):
     ward_no: Optional[str] = None
     house_no: Optional[str] = None
     profile_photo: Optional[str] = None
+    city: Optional[str] = None
+    pincode: Optional[str] = None

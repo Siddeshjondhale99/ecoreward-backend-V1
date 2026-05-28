@@ -15,3 +15,5 @@ class User(Base):
     ward_no = Column(String, nullable=True)
     house_no = Column(String, nullable=True)
     profile_photo = Column(String, nullable=True)
+    city = Column(String, nullable=True)
+    pincode = Column(String, nullable=True)
