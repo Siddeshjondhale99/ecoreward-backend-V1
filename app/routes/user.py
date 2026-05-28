@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..schemas.user import User as UserSchema
+from ..schemas.user import User as UserSchema, UserUpdate
 from ..schemas.waste import WasteCreate, WasteRecord as WasteRecordSchema
 from ..models.user import User
 from ..models.waste import WasteRecord
@@ -36,6 +36,34 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
 
 @router.get("/user/profile", response_model=UserSchema)
 def get_user_profile(current_user: User = Depends(get_current_user)):
+    return current_user
+
+@router.post("/user/profile", response_model=UserSchema)
+def update_user_profile(
+    profile_data: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if profile_data.name is not None:
+        current_user.name = profile_data.name
+    if profile_data.email is not None:
+        existing_user = db.query(User).filter(User.email == profile_data.email, User.id != current_user.id).first()
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        current_user.email = profile_data.email
+    if profile_data.rfid_id is not None:
+        current_user.rfid_id = profile_data.rfid_id
+    if profile_data.address is not None:
+        current_user.address = profile_data.address
+    if profile_data.ward_no is not None:
+        current_user.ward_no = profile_data.ward_no
+    if profile_data.house_no is not None:
+        current_user.house_no = profile_data.house_no
+    if profile_data.profile_photo is not None:
+        current_user.profile_photo = profile_data.profile_photo
+        
+    db.commit()
+    db.refresh(current_user)
     return current_user
 
 @router.get("/user/history", response_model=list[WasteRecordSchema])

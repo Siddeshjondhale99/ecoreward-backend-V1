@@ -11,3 +11,7 @@ class User(Base):
     rfid_id = Column(String, unique=True, index=True, nullable=False)
     points = Column(Integer, default=0)
     role = Column(String, default="user") # "admin" or "user"
+    address = Column(String, nullable=True)
+    ward_no = Column(String, nullable=True)
+    house_no = Column(String, nullable=True)
+    profile_photo = Column(String, nullable=True)

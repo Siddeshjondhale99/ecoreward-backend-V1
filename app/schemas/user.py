@@ -5,6 +5,10 @@ class UserBase(BaseModel):
     name: str
     email: EmailStr
     rfid_id: str
+    address: Optional[str] = None
+    ward_no: Optional[str] = None
+    house_no: Optional[str] = None
+    profile_photo: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
@@ -22,3 +26,7 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     rfid_id: Optional[str] = None
     points: Optional[int] = None
+    address: Optional[str] = None
+    ward_no: Optional[str] = None
+    house_no: Optional[str] = None
+    profile_photo: Optional[str] = None
