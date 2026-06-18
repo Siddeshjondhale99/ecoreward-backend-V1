@@ -8,7 +8,7 @@ def check_health() -> Dict[str, Any]:
     Checks the health of the AI model service.
     Recommended by the technical spec to be called before serving traffic.
     """
-    url = f"{settings.AI_SERVICE_URL}/health"
+    url = f"{settings.AI_SERVICE_URL.strip()}/health"
     try:
         response = requests.get(url, timeout=5)
         if response.status_code == 200:
@@ -22,7 +22,7 @@ def classify_waste(file_contents: bytes, max_retries: int = 3) -> Dict[str, Any]
     Classifies waste image by calling the Railway AI microservice.
     Handles multipart/form-data upload, error codes, and transient retries.
     """
-    url = f"{settings.AI_SERVICE_URL}/predict"
+    url = f"{settings.AI_SERVICE_URL.strip()}/predict"
     
     # Files dictionary for multipart/form-data
     files = {"file": ("image.jpg", file_contents, "image/jpeg")}
