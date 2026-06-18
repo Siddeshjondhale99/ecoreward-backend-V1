@@ -3,6 +3,47 @@ import time
 from typing import Dict, Optional, Any
 from ..config import settings
 
+def map_prediction_label(label: str) -> str:
+    if not label:
+        return "unknown"
+    
+    label_lower = label.lower().strip()
+    
+    # Map index-based fallback labels from the microservice (assuming 4 outputs: Dry, Wet, Recyclable, Hazardous)
+    index_mapping = {
+        "class_0": "dry",
+        "class_1": "wet",
+        "class_2": "recyclable",
+        "class_3": "dry"  # Map hazardous to dry to show only dry, wet, recyclable
+    }
+    
+    if label_lower in index_mapping:
+        return index_mapping[label_lower]
+        
+    # Map TrashNet 6 classes to backend categories if needed
+    trashnet_mapping = {
+        "cardboard": "recyclable",
+        "glass": "recyclable",
+        "metal": "recyclable",
+        "paper": "recyclable",
+        "plastic": "recyclable",
+        "trash": "dry"
+    }
+    if label_lower in trashnet_mapping:
+        return trashnet_mapping[label_lower]
+        
+    # Map uppercase/capitalized standard classes
+    if label_lower == "dry":
+        return "dry"
+    elif label_lower == "wet":
+        return "wet"
+    elif label_lower == "recyclable":
+        return "recyclable"
+    elif label_lower == "hazardous":
+        return "dry"  # Map hazardous to dry to show only dry, wet, recyclable
+        
+    return "unknown"
+
 def check_health() -> Dict[str, Any]:
     """
     Checks the health of the AI model service.
@@ -64,8 +105,10 @@ def classify_waste(file_contents: bytes, max_retries: int = 3) -> Dict[str, Any]
                         print(f"Failed to parse raw prediction list: {e}")
                         label = "unknown"
                 
+                mapped_label = map_prediction_label(label)
+                
                 return {
-                    "label": label or "unknown",
+                    "label": mapped_label,
                     "confidence": confidence or 0.0,
                     "index": index if index is not None else -1,
                     "raw": result
