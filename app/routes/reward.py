@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..schemas.waste import Reward as RewardSchema, RedeemedVoucher as VoucherSchema, CustomRedeemRequest
+from ..schemas.user import User as UserSchema
 from ..models.user import User
 from ..models.waste import WasteRecord, Reward, RedeemedVoucher
 from ..services import waste_service
@@ -74,3 +75,7 @@ def get_analytics(admin: User = Depends(check_admin_role), db: Session = Depends
         "waste_distribution": {item[0]: item[1] for item in waste_by_type},
         "leaderboard": [{"name": item[0], "points": item[1]} for item in leaderboard]
     }
+
+@admin_router.get("/admin/users", response_model=list[UserSchema])
+def get_admin_users(admin: User = Depends(check_admin_role), db: Session = Depends(get_db)):
+    return db.query(User).all()
