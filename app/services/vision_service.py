@@ -38,9 +38,9 @@ def classify_waste(file_contents: bytes, max_retries: int = 3) -> Dict[str, Any]
                 
                 # OPTION A: Robust Parsing
                 # Try to get new keys first
-                label = result.get("predicted_label")
+                label = result.get("predicted_label") or result.get("prediction")
                 confidence = result.get("confidence")
-                index = result.get("predicted_index")
+                index = result.get("predicted_index") or result.get("class_index")
                 
                 # Fallback: Parse from raw prediction array [[p1, p2, p3, p4]]
                 if label is None and "prediction" in result:
@@ -52,6 +52,17 @@ def classify_waste(file_contents: bytes, max_retries: int = 3) -> Dict[str, Any]
                         label = class_names[index]
                     except (IndexError, ValueError) as e:
                         print(f"Failed to parse raw prediction: {e}")
+                elif isinstance(label, list):
+                    # In case label gets assigned the probability list
+                    try:
+                        probs = label[0]
+                        confidence = max(probs)
+                        index = probs.index(confidence)
+                        class_names = ["dry", "wet", "recyclable", "hazardous"]
+                        label = class_names[index]
+                    except (IndexError, ValueError) as e:
+                        print(f"Failed to parse raw prediction list: {e}")
+                        label = "unknown"
                 
                 return {
                     "label": label or "unknown",
