@@ -75,9 +75,19 @@ def get_user_history(current_user: User = Depends(get_current_user), db: Session
     return db.query(WasteRecord).filter(WasteRecord.user_id == current_user.id).all()
 
 @router.post("/classify-waste")
-async def classify_waste(file: UploadFile = File(...), device_id: Optional[str] = None, db: Session = Depends(get_db)):
+async def classify_waste(
+    file: UploadFile = File(...), 
+    device_id: Optional[str] = None, 
+    moisture: Optional[float] = None,
+    db: Session = Depends(get_db)
+):
     contents = await file.read()
     result = vision_service.classify_waste(contents)
+    
+    # If any moisture is detected, override the AI prediction to show wet on screen
+    if moisture is not None and moisture > 0.0:
+        result["label"] = "wet"
+        result["confidence"] = 1.0
     
     if device_id:
         from ..models.iot import BinState

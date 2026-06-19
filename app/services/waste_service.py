@@ -38,8 +38,8 @@ def calculate_points(weight: float, waste_type: str, moisture: float = 0.0, conf
     return points
 
 def create_waste_submission(db: Session, user: User, weight: float, waste_type: str, moisture: float = 0.0, confidence: float = 1.0):
-    # Overwrite waste type to "wet" if moisture sensor detects wet waste
-    if moisture > 50.0 or (0.0 < moisture <= 1.0 and moisture >= 0.5):
+    # Overwrite waste type to "wet" if moisture sensor detects any moisture
+    if moisture > 0.0:
         waste_type = "wet"
 
     points = calculate_points(weight, waste_type, moisture, confidence)

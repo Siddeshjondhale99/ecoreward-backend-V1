@@ -100,8 +100,8 @@ def report_measurements(data: WasteMeasurement, db: Session = Depends(get_db)):
     final_waste_type = bin_state.last_waste_type or data.waste_type or "unknown"
     final_confidence = bin_state.last_ai_confidence or 0.9
 
-    # Overwrite waste type to "wet" if moisture sensor detects wet waste
-    if data.moisture > 50.0 or (0.0 < data.moisture <= 1.0 and data.moisture >= 0.5):
+    # Overwrite waste type to "wet" if moisture sensor detects any moisture
+    if data.moisture > 0.0:
         final_waste_type = "wet"
 
     record = waste_service.create_waste_submission(
