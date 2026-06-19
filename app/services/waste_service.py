@@ -6,6 +6,9 @@ import random
 import string
 
 def calculate_points(weight: float, waste_type: str, moisture: float = 0.0, confidence: float = 1.0) -> int:
+    if weight <= 0.0:
+        return 0
+
     base_multiplier = 0
     if waste_type == "recyclable":
         base_multiplier = settings.POINTS_RECYCLABLE
@@ -17,10 +20,6 @@ def calculate_points(weight: float, waste_type: str, moisture: float = 0.0, conf
         base_multiplier = settings.POINTS_WET
     elif waste_type == "hazardous":
         base_multiplier = settings.POINTS_HAZARDOUS
-    
-    # AI-Based Reward Logic: If weight or moisture is zero, use confidence-based points
-    if weight == 0 or moisture == 0:
-        return int(confidence * 50)
     
     points = int(weight * (base_multiplier or 5))
     
