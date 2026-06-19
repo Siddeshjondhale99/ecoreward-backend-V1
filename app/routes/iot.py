@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from typing import Optional
 from ..database import get_db
 from ..models.iot import BinState
 from ..models.user import User
@@ -56,7 +57,11 @@ def verify_user(data: QRVerification, db: Session = Depends(get_db)):
     return {"status": "verified", "message": f"Welcome {user.name if user else 'Guest'}! Bin is opening."}
 
 @router.get("/device-status", response_model=DeviceStatus)
-def get_device_status(device_id: str = "BIN_001", db: Session = Depends(get_db)):
+def get_device_status(
+    device_id: str = "BIN_001", 
+    moisture: Optional[float] = None,
+    db: Session = Depends(get_db)
+):
     """
     Called by ESP32 poller every 2-3 seconds.
     Resets status to 'idle' after successful read.
@@ -64,15 +69,21 @@ def get_device_status(device_id: str = "BIN_001", db: Session = Depends(get_db))
     bin_state = db.query(BinState).filter(BinState.device_id == device_id).first()
     
     if not bin_state:
-        # Default if not initialized
-        return {"status": "idle", "device_id": device_id}
+        # Auto-create if not exists
+        bin_state = BinState(device_id=device_id, status="idle", last_moisture=moisture)
+        db.add(bin_state)
+    else:
+        if moisture is not None:
+            bin_state.last_moisture = moisture
+            bin_state.last_updated = datetime.utcnow()
 
     current_status = bin_state.status
     
     # Auto-reset if it was in a triggered state
     if current_status in ["allowed", "denied"]:
         bin_state.status = "idle"
-        db.commit()
+        
+    db.commit()
     
     return {"status": current_status, "device_id": device_id}
 

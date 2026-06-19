@@ -12,3 +12,4 @@ class BinState(Base):
     last_user_id = Column(Integer, nullable=True)
     last_waste_type = Column(String, nullable=True)
     last_ai_confidence = Column(Float, nullable=True)
+    last_moisture = Column(Float, nullable=True)

@@ -60,8 +60,13 @@ void pollDeviceStatus() {
   WiFiClientSecure client;
   client.setInsecure(); // Important: Required to connect to Render (HTTPS)
   
+  // Read moisture sensor value in real-time
+  int rawMoisture = analogRead(moisturePin);
+  float moisturePercent = map(rawMoisture, 4095, 0, 0, 100); // 4095 is dry, 0 is wet
+  if (moisturePercent < 0) moisturePercent = 0;
+  
   HTTPClient http;
-  String url = baseUrl + "/device-status?device_id=BIN_001";
+  String url = baseUrl + "/device-status?device_id=BIN_001&moisture=" + String(moisturePercent);
   
   Serial.print("Polling URL: "); Serial.println(url);
   

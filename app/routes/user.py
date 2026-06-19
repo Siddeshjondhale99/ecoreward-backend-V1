@@ -93,6 +93,11 @@ async def classify_waste(
         from ..models.iot import BinState
         bin_state = db.query(BinState).filter(BinState.device_id == device_id).first()
         if bin_state:
+            # Overwrite label to "wet" if the physical bin sensor currently detects any moisture
+            if bin_state.last_moisture is not None and bin_state.last_moisture > 0.0:
+                result["label"] = "wet"
+                result["confidence"] = 1.0
+
             bin_state.last_waste_type = result.get("label")
             bin_state.last_ai_confidence = result.get("confidence")
             db.commit()
